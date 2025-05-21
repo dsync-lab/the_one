@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Pi App Login</title>
+  <!-- Pi JS SDK from Pi’s own CDN -->
+  <script src="https://sdk.minepi.com/pi-sdk.js"></script>
+  <style>
+    body { font-family: sans-serif; padding: 2rem; background: #f7f7f7; }
+    #login { padding: 0.75rem 1.5rem; font-size: 1rem; }
+    #status { margin-top: 1rem; color: #333; }
+  </style>
+</head>
+<body>
+  <h1>Welcome to Airdrop Tester</h1>
+  <button id="login">Login with Pi</button>
+  <div id="status"></div>
+
+  <script>
+    document.getElementById('login').onclick = async () => {
+      try {
+        // initialize the Pi SDK in sandbox mode for testing
+        Pi.init({ version: "2.0", sandbox: true });
+
+        // ask for username & payments scopes
+        const auth = await Pi.authenticate(
+          ['username', 'payments'],
+          payment => console.log('Incomplete payment found:', payment)
+        );
+
+        // show who just logged in
+        document.getElementById('status').innerText =
+          `Logged in: ${auth.user.username} (UID: ${auth.user.uid})`;
+
+        // POST the entire auth payload back to Flask at /store-user
+        const res = await fetch("/store-user", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(auth)
+        });
+
+        const data = await res.json();
+        if (res.ok) {
+          document.getElementById('status').innerText +=
+            ` → UID stored: ${data.uid}`;
+        } else {
+          document.getElementById('status').innerText +=
+            ` → Error: ${data.error || res.statusText}`;
+        }
+      } catch (err) {
+        console.error('Login error:', err);
+        document.getElementById('status').innerText = "Login failed.";
+      }
+    };
+  </script>
+</body>
+</html>
