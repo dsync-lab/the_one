@@ -21,7 +21,7 @@
     document.getElementById('login').onclick = async () => {
       try {
         // initialize the Pi SDK in sandbox mode for testing
-        Pi.init({ version: "2.0", sandbox: true });
+        Pi.init({ version: "2.0"});
 
         // ask for username & payments scopes
         const auth = await Pi.authenticate(

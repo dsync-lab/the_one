@@ -10,7 +10,7 @@ app = Flask(__name__)
 CORS(app)
 
 # Replace with your actual Pi App API secret (store securely!)
-API_SECRET = os.getenv('PI_APP_API')
+API_SECRET = os.getenv('PI_APP_API') # ymsv5rn51qr9afac477bwazqpyq6hxd5hecheslvpnurgehnots7dhs4f6nf8rpw
 
 # Route to render the login template
 @app.route('/')
